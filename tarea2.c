@@ -9,7 +9,6 @@ void printMatriz(char* matriz)
     int rows = 9;
     int cols = 9;
     
-    //printf("--------------------------\n");
     printf("    A B C   D E F   G H I \n");
     
     for(int i = 0; i<rows; i++)
@@ -24,40 +23,24 @@ void printMatriz(char* matriz)
             {
                 printf("%d | ", i+1);
             }
-            printf("%c ", matriz[(j+(rows*i))-1]);
+            if (matriz[(j+(rows*i))-1] == '0')
+            {
+                printf("  ");
+            } 
+            else
+            {
+                printf("%c ", matriz[(j+(rows*i))-1]);
+            }
             if (j % 3 == 0)
             {
                 printf("| ");
-            }
-            
-            
+            }           
             if ((j == cols) && (j != 1))
             {
                 printf("\n");
-            }
-            
+            }           
         }
-
     }
-    /* 
-    ) || (j == 1)
-    for(int i = 0; i<n; i++)
-    {
-        for(int j = 1; j<n+1; j++)
-        {
-            printf("a: %d ", (j));
-            printf("b: %d ", (j+(9*i))-1);
-            printf("c: %d \n", (i));
-
-        }
-    }*/
-    printf("--------------------------");
-    printf("\n%s", matriz);
-    printf("\n%c", matriz[0]);
-    printf("\n%d", strlen(matriz));
-    printf("\n%p", *matriz);
-
-
 }
 
 
