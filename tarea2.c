@@ -127,6 +127,7 @@ int is_valid_sudoku(char *sudoku)
         {
             int num = cell - '0'; //para tranformar el char del string a int
 
+            //checkeamos si el numero ya existe
             if (rows[row][num] || columns[col][num] || boxes[row / 3 * 3 + col / 3][num]) {
                 return 0;
             }
@@ -174,6 +175,18 @@ int is_sudoku_complete(char *sudoku)
     }
     return 1;
 }
+int check_move_original_sudoku(char *original_sudoku, int row, char col)
+{
+    int index = row_col_to_string_index(row, col);
+
+    if (original_sudoku[index] == '0') //importante ocupar el character 0
+    {
+        return 1;
+    }
+
+    printf("\nNo se pueden cambiar numeros del sudoku original... \n");
+    return 0;
+}
 
 int main()
 {   
@@ -186,9 +199,7 @@ int main()
 
     while (1)
     {   
-        
         show_sudoku(sudoku);
-        
 
         //recibimnos la columna 
         char col;
@@ -203,6 +214,7 @@ int main()
         if (col == 'O')
         {
             show_sudoku(original_sudoku);
+            //printf("\n-----------------------\n");
             continue;
         }
         
@@ -213,16 +225,16 @@ int main()
 
         //recibimos numero
         char number = ' ';
-        printf("numero? (0 para borrar): ");
+        printf("\nnumero? (0 para borrar): ");
         scanf(" %c", &number);
         
         //si la jugada es valida se hace
-        if (is_valid_move(sudoku, row, col, number))
+        if (is_valid_move(sudoku, row, col, number)&& (check_move_original_sudoku(original_sudoku, row, col)))
         {
             do_move(sudoku, row, col, number);
         }
         else
-        {
+        {   
             printf("\nJugada no valida... \n");
         }
 
@@ -234,5 +246,6 @@ int main()
         }
     }
          
+        // && (check_move_original_sudoku(original_sudoku, row, col))
     free(sudoku);
 }
