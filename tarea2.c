@@ -25,7 +25,7 @@ void show_sudoku(char* matrix)
             }
             if (matrix[(j+(rows*i))-1] == '0')
             {
-                printf("0 ");
+                printf("  ");
             } 
             else
             {
@@ -51,7 +51,7 @@ void read_specific_line(char *file_name, int line_number, char *result_line)
     //lo recibimos para poder manejar la memoria desde afuera de la funcion
     FILE *file;
     int max_characters = 83;
-    //83 es el max de characters que queremos leer,
+    //83 es el max de characters que queremos leer por cada linea,
     //81 de la matriz + \n
 
     file = fopen(file_name, "r");
@@ -69,10 +69,11 @@ void read_specific_line(char *file_name, int line_number, char *result_line)
 }
 
 int main()
-{
-    char matrix[100] = "";
-    read_specific_line("puzles.txt", 10, matrix);
-    printf("%s", matrix); 
-    show_sudoku(matrix);
-
+{   
+    int n = 81;
+    char *sudoku = malloc((n+1)*sizeof(char));
+    read_specific_line("puzles.txt", 4, sudoku);
+    //printf("%s\n", sudoku);
+    show_sudoku(sudoku);
+    free(sudoku);
 }
