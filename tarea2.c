@@ -42,6 +42,8 @@ void show_sudoku(char* matrix)
         }
     }
     printf("  -------------------------\n");
+    printf("\n");
+
 
 }
 void read_specific_line(char *file_name, int line_number, char *result_line)
@@ -68,6 +70,28 @@ void read_specific_line(char *file_name, int line_number, char *result_line)
     fclose(file);
 }
 
+int row_col_to_string_index(int row, char col_char)
+{  
+    /*funcion que cambia la letra de una columna y numero de fila
+       como por ejemplo 'a', 2 y la cambia por 0 
+       ó por ejemplo b, 3 y da x*/
+    char letters[9] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'};
+    
+    for(int i = 0; i < 9; i++)
+    {   
+        //printf("");
+        //printf("c: %c\n", letters[i]);
+        //printf("b: %d\n", i);
+
+        if (letters[i] == col_char)
+        {
+            return ((row - 1) * 9) + i;
+        }
+    }
+    return -1; // si la columna no esta en la lista, retornamos -1 para simbolizar que hubo un error
+}
+
+
 int main()
 {   
     int n = 81;
@@ -75,5 +99,7 @@ int main()
     read_specific_line("puzles.txt", 4, sudoku);
     //printf("%s\n", sudoku);
     show_sudoku(sudoku);
+    printf("x: %c\n", sudoku[row_col_to_string_index(8, 'I')]);
+    
     free(sudoku);
 }
