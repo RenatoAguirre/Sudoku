@@ -1,4 +1,4 @@
-
+#include <ctype.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -9,6 +9,7 @@ void show_sudoku(char* matrix)
     int rows = 9;
     int cols = 9;
     
+    printf("\n");
     printf("    A B C   D E F   G H I \n");
     
     for (int i = 0; i<rows; i++)
@@ -91,15 +92,147 @@ int row_col_to_string_index(int row, char col_char)
     return -1; // si la columna no esta en la lista, retornamos -1 para simbolizar que hubo un error
 }
 
+int check_move(char *sudoku, int index)
+{   //retorna 1 si es jugada valida, 0 en caso contrario
+    int number_at_index = sudoku[index] - '0';
+    if (number_at_index == 0)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int is_valid_sudoku(char *sudoku) 
+{
+    /* 
+     creamos una matriz donde vamos a ir guardando los numeros
+     que ya vimos, luego simplemente checkeamos si ya lo vimos
+     se van guardando de la sgte manera:
+     rows[row][numero] = 1 si ya se vio, 0 de lo contrario
+     esta fuuncion, solo sirve para ver si la sgte movida es valida
+     para chekear la completitud del sudoku no hay q tomar en cuenta los 0
+     por lo tanto habra q hacer otra funcion. 
+    */
+    int rows[9][10] = {0}; 
+    int columns[9][10] = {0}; 
+    int boxes[9][10] = {0}; //estas son las casillas de 3x3
+
+    for (int i = 0; i < 81; i++) 
+    {
+        int row = i / 9;
+        int col = i % 9;
+        char cell = sudoku[i];
+
+        if (cell >= '1' && cell <= '9') 
+        {
+            int num = cell - '0'; //para tranformar el char del string a int
+
+            if (rows[row][num] || columns[col][num] || boxes[row / 3 * 3 + col / 3][num]) {
+                return 0;
+            }
+
+            rows[row][num] = 1;
+            columns[col][num] = 1;
+            boxes[row / 3 * 3 + col / 3][num] = 1;
+        }
+    }
+    return 1; //si llego hasta aca, es valido
+}
+//Funcion para remplzar los nmero en nuestro sudoku
+void do_move(char *sudoku, int row, char col, char number)
+{   
+    int index = row_col_to_string_index(row, col);
+    sudoku[index] = number;
+}
+
+int is_valid_move(char *sudoku, int row, char col, char number)
+{   
+    char new_sudoku[81] = "";
+    strcpy(new_sudoku, sudoku);
+    
+    //int index = row_col_to_string_index(row, col);
+    do_move(new_sudoku, row, col, number);
+
+    if (is_valid_sudoku(new_sudoku))
+    {
+        return 1;
+    }
+    return 0;
+}
+int is_sudoku_complete(char *sudoku)
+{   
+    //chekeamos si el sudoku es valido, y si no contiene ceros es porque esta completo
+    if (is_valid_sudoku(sudoku))
+    {
+        for (int i = 0; i < 81; i++)
+        {
+            if (sudoku[i] == '0')
+            {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
 
 int main()
 {   
     int n = 81;
     char *sudoku = malloc((n+1)*sizeof(char));
     read_specific_line("puzles.txt", 4, sudoku);
-    //printf("%s\n", sudoku);
-    show_sudoku(sudoku);
-    printf("x: %c\n", sudoku[row_col_to_string_index(8, 'I')]);
-    
+
+    char original_sudoku[100] = "";
+    strcpy(original_sudoku, sudoku);
+
+    while (1)
+    {   
+        
+        show_sudoku(sudoku);
+        
+
+        //recibimnos la columna 
+        char col;
+        printf("\nIngrese columna (a/i) (x para salir), (o para mostrar sudoku original): ");
+        scanf(" %c", &col);
+        col = toupper(col);
+
+        if (col == 'X')
+        {
+            break;
+        }
+        if (col == 'O')
+        {
+            show_sudoku(original_sudoku);
+            continue;
+        }
+        
+        //recibimos row
+        int row = 0;
+        printf("\nIngrese numero de fila (1/9): ");
+        scanf(" %d", &row);
+
+        //recibimos numero
+        char number = ' ';
+        printf("numero? (0 para borrar): ");
+        scanf(" %c", &number);
+        
+        //si la jugada es valida se hace
+        if (is_valid_move(sudoku, row, col, number))
+        {
+            do_move(sudoku, row, col, number);
+        }
+        else
+        {
+            printf("\nJugada no valida... \n");
+        }
+
+        //checkeamos si se ganó 
+        if (is_sudoku_complete(sudoku))
+        {
+            printf("\n FELICIDADES, GANASTE!! \n");
+            break;
+        }
+    }
+         
     free(sudoku);
 }
